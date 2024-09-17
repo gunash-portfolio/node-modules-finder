@@ -2,6 +2,14 @@
 
 This project is a simple HTTPS server built using Node.js and TypeScript. It demonstrates how to set up an HTTPS server with SSL certificates in a TypeScript project.
 
+## Table of Contents
+- [Clone the repository](#clone-the-repository)
+- [Install dependencies](#install-dependencies)
+- [Generate self-signed SSL certificate](#generate-self-signed-ssl-certificate)
+- [Compile the TypeScript code](#compile-the-typeScript-code)
+- [Start the server](#start-the-server)
+
+
 ## Features
 - Serves content over HTTPS using self-signed SSL certificates.
 - Written in TypeScript for better type safety and developer experience.
@@ -27,12 +35,7 @@ Before you begin, ensure you have the following installed on your system:
   package.json         # Node.js dependencies and scripts
 
 ```
-## Table of Contents
-- [Clone the repository](#clone-the-repository)
-- [Install dependencies](#install-dependencies)
-- [Generate self-signed SSL certificate](#generate-self-signed-ssl-certificate)
-- [Compile the TypeScript code](#compile-the-typeScript-code)
-- [Start the server](#start-the-server)
+
 
 # Getting Started
 
