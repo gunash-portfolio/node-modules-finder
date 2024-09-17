@@ -1,22 +1,19 @@
-import https from "https";
-import fs from "fs";
-import path from "path";
-import { IncomingMessage, ServerResponse } from "http";
+import fs from "node:fs";
+import path from "node:path";
 
-const options = {
-  key: fs.readFileSync(path.join(__dirname, "../cert", "key.pem")),
-  cert: fs.readFileSync(path.join(__dirname, "../cert", "cert.pem")),
+const folderPath: string = "/Users/gunashfarzaliyev"; // Replace with your folder path
+
+const hasNodeModules = (folderName: string): boolean => {
+  const fullPath = path.join(folderName, "node_modules");
+  return fs.existsSync(fullPath) && fs.lstatSync(fullPath).isDirectory();
 };
 
-const server = https.createServer(
-  options,
-  (req: IncomingMessage, res: ServerResponse) => {
-    res.writeHead(200, { "Content-type": "text/plain" });
-    res.end("Hello, HTTPS World");
-  },
-);
+// Check if the specified folder contains a node_modules directory
+const nodeModulesFolders = fs
+  .readdirSync(folderPath)
+  .map((folderName: string) => {
+    return path.join(folderPath, folderName); // Get full path
+  })
+  .filter(hasNodeModules); // Filter folders with node_modules
 
-const PORT = 8443;
-server.listen(PORT, () => {
-  console.log(`HTTPS server is running at https://localhost:${PORT}`);
-});
+console.log("Directories containing node_modules:", nodeModulesFolders);

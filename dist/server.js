@@ -3,18 +3,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const https_1 = __importDefault(require("https"));
-const fs_1 = __importDefault(require("fs"));
-const path_1 = __importDefault(require("path"));
-const options = {
-    key: fs_1.default.readFileSync(path_1.default.join(__dirname, "../cert", "key.pem")),
-    cert: fs_1.default.readFileSync(path_1.default.join(__dirname, "../cert", "cert.pem")),
+const node_fs_1 = __importDefault(require("node:fs"));
+const node_path_1 = __importDefault(require("node:path"));
+const folderPath = "/"; // Replace with your folder path
+const hasNodeModules = (folderName) => {
+    const fullPath = node_path_1.default.join(folderName, "node_modules");
+    return node_fs_1.default.existsSync(fullPath) && node_fs_1.default.lstatSync(fullPath).isDirectory();
 };
-const server = https_1.default.createServer(options, (req, res) => {
-    res.writeHead(200, { "Content-type": "text/plain" });
-    res.end("Hello, HTTPS World");
-});
-const PORT = 8443;
-server.listen(PORT, () => {
-    console.log(`HTTPS server is running at https://localhost:${PORT}`);
-});
+// Check if the specified folder contains a node_modules directory
+const nodeModulesFolders = node_fs_1.default
+    .readdirSync(folderPath)
+    .map((folderName) => {
+    return node_path_1.default.join(folderPath, folderName); // Get full path
+})
+    .filter(hasNodeModules); // Filter folders with node_modules
+console.log("Directories containing node_modules:", nodeModulesFolders);
