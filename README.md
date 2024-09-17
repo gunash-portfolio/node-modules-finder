@@ -74,3 +74,22 @@ This will compile the TypeScript code into JavaScript and output it in the dist 
 ```bash
 node dist/server.js
 ```
+The server will start and listen on port 8443. You can access it via:
+https://localhost:8443
+
+### 6. Access the Server
+Since the server uses a self-signed SSL certificate, you may see a security warning when accessing it via the browser. You can bypass this warning for local development purposes.
+
+## Scripts
+- Build the project:
+```bash
+npx tsc
+```
+- Run the server:
+```bash
+node dist/server.js
+```
+
+## License
+This project is licensed under the MIT License.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
