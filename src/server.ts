@@ -1,22 +1,62 @@
-import https from "https";
+import express, { Request, Response } from "express";
+import cors from "cors";
 import fs from "fs";
 import path from "path";
-import { IncomingMessage, ServerResponse } from "http";
 
-const options = {
-  key: fs.readFileSync(path.join(__dirname, "../cert", "key.pem")),
-  cert: fs.readFileSync(path.join(__dirname, "../cert", "cert.pem")),
-};
+const app = express();
+const port = 3001;
 
-const server = https.createServer(
-  options,
-  (req: IncomingMessage, res: ServerResponse) => {
-    res.writeHead(200, { "Content-type": "text/plain" });
-    res.end("Hello, HTTPS World");
-  },
+app.use(
+  cors({
+    origin: "http://localhost:3000", // Allow only requests from this origin
+  }),
 );
 
-const PORT = 8443;
-server.listen(PORT, () => {
-  console.log(`HTTPS server is running at https://localhost:${PORT}`);
+// Type definition for our function to search node_modules
+const findNodeModules = (folderPath: string): string[] => {
+  let foundNodeModules: string[] = [];
+
+  const nodeModulesPath = path.join(folderPath, "node_modules");
+  if (
+    fs.existsSync(nodeModulesPath) &&
+    fs.lstatSync(nodeModulesPath).isDirectory()
+  ) {
+    foundNodeModules.push(folderPath);
+  }
+
+  let entries;
+  try {
+    entries = fs.readdirSync(folderPath, { withFileTypes: true });
+  } catch (err) {
+    console.error(`Error accessing ${folderPath}:`, err);
+    return foundNodeModules;
+  }
+
+  for (const entry of entries) {
+    const entryPath = path.join(folderPath, entry.name);
+    if (
+      entry.isDirectory() &&
+      entry.name !== "node_modules" &&
+      !entry.name.startsWith(".")
+    ) {
+      try {
+        foundNodeModules = foundNodeModules.concat(findNodeModules(entryPath));
+      } catch (err) {
+        console.error(`Error accessing ${entryPath}:`, err);
+      }
+    }
+  }
+
+  return foundNodeModules;
+};
+
+// API endpoint to search for node_modules directories
+app.get("/api/node-modules", (req: Request, res: Response) => {
+  const rootFolder = "/"; // Replace with your home directory path
+  const result = findNodeModules(rootFolder);
+  res.json(result); // Send the result as JSON
+});
+
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
 });
