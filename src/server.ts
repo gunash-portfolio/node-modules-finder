@@ -1,12 +1,21 @@
-import fs from "node:fs";
-import path from "node:path";
+import express, { Request, Response } from "express";
+import cors from "cors";
+import fs from "fs";
+import path from "path";
 
-const rootFolder: string = "/"; // Root folder of macOS
+const app = express();
+const port = 3001;
 
+app.use(
+  cors({
+    origin: "http://localhost:3000", // Allow only requests from this origin
+  }),
+);
+
+// Type definition for our function to search node_modules
 const findNodeModules = (folderPath: string): string[] => {
   let foundNodeModules: string[] = [];
 
-  // Check if the current folder has a node_modules folder
   const nodeModulesPath = path.join(folderPath, "node_modules");
   if (
     fs.existsSync(nodeModulesPath) &&
@@ -17,18 +26,14 @@ const findNodeModules = (folderPath: string): string[] => {
 
   let entries;
   try {
-    // Get list of directories in the current folder
     entries = fs.readdirSync(folderPath, { withFileTypes: true });
   } catch (err) {
     console.error(`Error accessing ${folderPath}:`, err);
-    return foundNodeModules; // Return what has been found so far, skipping this folder
+    return foundNodeModules;
   }
 
-  // Loop through each entry and recurse if it's a directory
   for (const entry of entries) {
     const entryPath = path.join(folderPath, entry.name);
-
-    // Skip if it's not a directory or it's a system/hidden directory
     if (
       entry.isDirectory() &&
       entry.name !== "node_modules" &&
@@ -45,7 +50,13 @@ const findNodeModules = (folderPath: string): string[] => {
   return foundNodeModules;
 };
 
-// Start search from the root folder
-const nodeModulesFolders = findNodeModules(rootFolder);
+// API endpoint to search for node_modules directories
+app.get("/api/node-modules", (req: Request, res: Response) => {
+  const rootFolder = "/"; // Replace with your home directory path
+  const result = findNodeModules(rootFolder);
+  res.json(result); // Send the result as JSON
+});
 
-console.log("Directories containing node_modules:", nodeModulesFolders);
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+});

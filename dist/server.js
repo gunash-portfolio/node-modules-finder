@@ -3,30 +3,33 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const node_fs_1 = __importDefault(require("node:fs"));
-const node_path_1 = __importDefault(require("node:path"));
-const rootFolder = "/"; // Root folder of macOS
+const express_1 = __importDefault(require("express"));
+const cors_1 = __importDefault(require("cors"));
+const fs_1 = __importDefault(require("fs"));
+const path_1 = __importDefault(require("path"));
+const app = (0, express_1.default)();
+const port = 3001;
+app.use((0, cors_1.default)({
+    origin: "http://localhost:3000", // Allow only requests from this origin
+}));
+// Type definition for our function to search node_modules
 const findNodeModules = (folderPath) => {
     let foundNodeModules = [];
-    // Check if the current folder has a node_modules folder
-    const nodeModulesPath = node_path_1.default.join(folderPath, "node_modules");
-    if (node_fs_1.default.existsSync(nodeModulesPath) &&
-        node_fs_1.default.lstatSync(nodeModulesPath).isDirectory()) {
+    const nodeModulesPath = path_1.default.join(folderPath, "node_modules");
+    if (fs_1.default.existsSync(nodeModulesPath) &&
+        fs_1.default.lstatSync(nodeModulesPath).isDirectory()) {
         foundNodeModules.push(folderPath);
     }
     let entries;
     try {
-        // Get list of directories in the current folder
-        entries = node_fs_1.default.readdirSync(folderPath, { withFileTypes: true });
+        entries = fs_1.default.readdirSync(folderPath, { withFileTypes: true });
     }
     catch (err) {
         console.error(`Error accessing ${folderPath}:`, err);
-        return foundNodeModules; // Return what has been found so far, skipping this folder
+        return foundNodeModules;
     }
-    // Loop through each entry and recurse if it's a directory
     for (const entry of entries) {
-        const entryPath = node_path_1.default.join(folderPath, entry.name);
-        // Skip if it's not a directory or it's a system/hidden directory
+        const entryPath = path_1.default.join(folderPath, entry.name);
         if (entry.isDirectory() &&
             entry.name !== "node_modules" &&
             !entry.name.startsWith(".")) {
@@ -40,6 +43,12 @@ const findNodeModules = (folderPath) => {
     }
     return foundNodeModules;
 };
-// Start search from the root folder
-const nodeModulesFolders = findNodeModules(rootFolder);
-console.log("Directories containing node_modules:", nodeModulesFolders);
+// API endpoint to search for node_modules directories
+app.get("/api/node-modules", (req, res) => {
+    const rootFolder = "/"; // Replace with your home directory path
+    const result = findNodeModules(rootFolder);
+    res.json(result); // Send the result as JSON
+});
+app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`);
+});
