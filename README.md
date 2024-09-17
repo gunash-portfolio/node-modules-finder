@@ -4,11 +4,11 @@ This project is a simple HTTPS server built using Node.js and TypeScript. It dem
 
 ## Table of Contents
 -[Getting Started](#getting-started)
-  -[Clone the repository](#clone-the-repository)
-  -[Install dependencies](#install-dependencies)
-  -[Generate self-signed SSL certificate](#generate-self-signed-ssl-certificate)
-  -[Compile the TypeScript code](#compile-the-typeScript-code)
-  -[Start the server](#start-the-server)
+  - [Clone the repository](#clone-the-repository)
+  - [Install dependencies](#install-dependencies)
+  - [Generate self-signed SSL certificate](#generate-self-signed-ssl-certificate)
+  - [Compile the TypeScript code](#compile-the-typeScript-code)
+  - [Start the server](#start-the-server)
 
 
 ## Features
