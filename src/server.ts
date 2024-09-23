@@ -2,10 +2,11 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import fs from "fs";
 import path from "path";
+import { exec } from "child_process";
 
 const app = express();
 const port = 3001;
-
+app.use(express.json());
 app.use(
   cors({
     origin: "http://localhost:3000", // Allow only requests from this origin
@@ -55,6 +56,38 @@ app.get("/api/node-modules", (req: Request, res: Response) => {
   const rootFolder = "/"; // Replace with your home directory path
   const result = findNodeModules(rootFolder);
   res.json(result); // Send the result as JSON
+});
+
+// API endpoint to open a folder
+app.post("/api/open-folder", (req: Request, res: Response) => {
+  const { folderPath } = req.body;
+
+  // Open the folder using system-specific command
+  if (process.platform === "darwin") {
+    // macOS
+    exec(`open "${folderPath}"`, (err) => {
+      if (err) {
+        return res.status(500).json({ error: "Failed to open folder" });
+      }
+      res.status(200).json({ message: "Folder opened" });
+    });
+  } else if (process.platform === "win32") {
+    // Windows
+    exec(`start "" "${folderPath}"`, (err) => {
+      if (err) {
+        return res.status(500).json({ error: "Failed to open folder" });
+      }
+      res.status(200).json({ message: "Folder opened" });
+    });
+  } else if (process.platform === "linux") {
+    // Linux
+    exec(`xdg-open "${folderPath}"`, (err) => {
+      if (err) {
+        return res.status(500).json({ error: "Failed to open folder" });
+      }
+      res.status(200).json({ message: "Folder opened" });
+    });
+  }
 });
 
 app.listen(port, () => {
