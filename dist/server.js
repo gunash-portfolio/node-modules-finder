@@ -7,8 +7,10 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
+const child_process_1 = require("child_process");
 const app = (0, express_1.default)();
 const port = 3001;
+app.use(express_1.default.json());
 app.use((0, cors_1.default)({
     origin: "http://localhost:3000", // Allow only requests from this origin
 }));
@@ -48,6 +50,38 @@ app.get("/api/node-modules", (req, res) => {
     const rootFolder = "/"; // Replace with your home directory path
     const result = findNodeModules(rootFolder);
     res.json(result); // Send the result as JSON
+});
+// API endpoint to open a folder
+app.post("/api/open-folder", (req, res) => {
+    const { folderPath } = req.body;
+    // Open the folder using system-specific command
+    if (process.platform === "darwin") {
+        // macOS
+        (0, child_process_1.exec)(`open "${folderPath}"`, (err) => {
+            if (err) {
+                return res.status(500).json({ error: "Failed to open folder" });
+            }
+            res.status(200).json({ message: "Folder opened" });
+        });
+    }
+    else if (process.platform === "win32") {
+        // Windows
+        (0, child_process_1.exec)(`start "" "${folderPath}"`, (err) => {
+            if (err) {
+                return res.status(500).json({ error: "Failed to open folder" });
+            }
+            res.status(200).json({ message: "Folder opened" });
+        });
+    }
+    else if (process.platform === "linux") {
+        // Linux
+        (0, child_process_1.exec)(`xdg-open "${folderPath}"`, (err) => {
+            if (err) {
+                return res.status(500).json({ error: "Failed to open folder" });
+            }
+            res.status(200).json({ message: "Folder opened" });
+        });
+    }
 });
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
