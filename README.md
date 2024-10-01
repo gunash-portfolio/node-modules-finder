@@ -2,6 +2,9 @@
 
 The Node Modules Finder application is a simple tool designed to help users manage and open folders containing `node_modules`. It consists of a frontend built with React and a backend powered by Express.js. This document provides an overview of both components, including installation instructions, features, and API details.
 
+
+![Node Modules Finder photos](http://url/to/img.png)
+
 ## **Table of Contents**
 - [Overview](#overview)
 - [Frontend](#frontend)
