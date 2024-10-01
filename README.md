@@ -124,7 +124,7 @@ To set up the backend locally, follow these steps:
       }
       ```
 ## **Important**
-- First you must install compile and run backend side:
+- First you must install, compile and run backend side:
 - Second you must install and run frontend side and open `http://localhost:3000` in your browser:
 
 
