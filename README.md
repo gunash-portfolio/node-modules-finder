@@ -4,7 +4,6 @@ The Node Modules Finder application is a simple tool designed to help users mana
 
 
 <div>
-<img src="https://github.com/gunash-portfolio/node-modules-finder/blob/it-will-be-awesome-or-i-will-mess-up/photo1.png" alt="Project Screenshot" width="300"/>
 <img src="https://github.com/gunash-portfolio/node-modules-finder/blob/it-will-be-awesome-or-i-will-mess-up/photo2.png" alt="Project Screenshot" width="300"/>
 <img src="https://github.com/gunash-portfolio/node-modules-finder/blob/main/input.gif" alt="Project Screenshot" width="300"/>
 </div>
